@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Manrope', sans-serif;
+  background-color: #F4F1E8;
+  color: #12372A;
+}
+
+.familjen-grotesk {
+  font-family: 'Familjen Grotesk', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'DM Serif Display', serif;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #08120F;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #12372A;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #12372A;
+}
+
+p {
+  margin: 0;
+  color: #334155;
+  line-height: 1.6;
+}
+
+/* Subtle grain texture */
+@supports (background-image: url('data:image/svg+xml')) {
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="4" seed="2"/><feDisplacementMap in="SourceGraphic" scale="30"/></filter></svg>');
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.intro-loader {
+  animation: intro-fade-out 500ms ease 2.1s forwards;
+}
+
+.intro-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1em;
+  letter-spacing: -0.08em;
+  font-size: clamp(2.8rem, 6vw, 7rem);
+  line-height: 0.9;
+}
+
+.intro-word {
+  display: inline-flex;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: intro-word-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.intro-letter {
+  display: inline-block;
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(6px);
+  animation: intro-letter-reveal 650ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes intro-word-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes intro-letter-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes intro-fade-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
