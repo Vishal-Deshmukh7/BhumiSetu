@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const { analyzeDocument } = require('./intelligenceService');
+const { calculateCompensation } = require('./compensationService');
+const { interpretCompensation } = require('./compensationAiService');
 const {
   dashboardSummary,
   projects,
@@ -14,6 +16,13 @@ const {
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+const assessments = new Map();
+let nextAssessmentNumber = 1;
+
+function getCompensationCalculation(body) {
+  if (body?.calculation?.inputs) return calculateCompensation(body.calculation.inputs);
+  return calculateCompensation(body);
+}
 
 function normalizeMimeType(file) {
   const mime = (file.mimetype || '').toLowerCase();
@@ -79,6 +88,30 @@ app.get('/api/projects/:projectId/parcels', (req, res) => {
   res.json({ parcels: filteredParcels });
 });
 
+app.get('/api/parcels/:parcelId/context', (req, res) => {
+  const parcel = parcels.find((item) => item.id === req.params.parcelId || item.parcelId === req.params.parcelId);
+  if (!parcel) return res.status(404).json({ message: 'Parcel not found' });
+
+  const project = projects.find((item) => item.id === parcel.projectId);
+  return res.json({
+    parcel,
+    project,
+    context: {
+      parentProject: project,
+      parcelImpact: parcel.impact,
+      timeline: parcel.timeline,
+      operationalDependency: parcel.operationalDependency,
+      aiInsight: parcel.aiInsight
+    }
+  });
+});
+
+app.get('/api/parcels/:parcelId', (req, res) => {
+  const parcel = parcels.find((item) => item.id === req.params.parcelId || item.parcelId === req.params.parcelId);
+  if (!parcel) return res.status(404).json({ message: 'Parcel not found' });
+  return res.json({ parcel });
+});
+
 app.get('/api/documents', (req, res) => {
   res.json({ documents });
 });
@@ -96,6 +129,54 @@ app.get('/api/intelligence', (req, res) => {
       rnrCasesRequiringReview: parcels.filter((parcel) => parcel.rrRequired && parcel.possession !== 'In Progress').length
     }
   });
+});
+
+app.post('/api/compensation/calculate', (req, res) => {
+  try {
+    return res.json({ calculation: calculateCompensation(req.body) });
+  } catch (error) {
+    if (error.code === 'INVALID_INPUT') return res.status(422).json({ message: error.message });
+    return res.status(500).json({ message: 'Compensation calculation failed.' });
+  }
+});
+
+app.post('/api/compensation/analyze', async (req, res) => {
+  try {
+    const calculation = getCompensationCalculation(req.body);
+    const insight = await interpretCompensation(calculation);
+    return res.json({ calculation, insight });
+  } catch (error) {
+    if (error.code === 'INVALID_INPUT') return res.status(422).json({ message: error.message });
+    return res.status(500).json({ message: 'Compensation analysis failed.' });
+  }
+});
+
+app.post('/api/compensation/assessments', (req, res) => {
+  try {
+    const calculation = getCompensationCalculation(req.body);
+    const assessmentId = `ASM-${String(nextAssessmentNumber).padStart(4, '0')}`;
+    nextAssessmentNumber += 1;
+    const assessment = {
+      assessmentId,
+      projectId: req.body?.projectId || calculation.inputs?.projectId || null,
+      parcelId: req.body?.parcelId || calculation.inputs?.parcelId || null,
+      calculation,
+      insight: req.body?.insight || null,
+      createdAt: new Date().toISOString(),
+      persistence: 'in-memory-prototype'
+    };
+    assessments.set(assessmentId, assessment);
+    return res.status(201).json({ assessment });
+  } catch (error) {
+    if (error.code === 'INVALID_INPUT') return res.status(422).json({ message: error.message });
+    return res.status(500).json({ message: 'Assessment could not be saved.' });
+  }
+});
+
+app.get('/api/compensation/assessments/:assessmentId', (req, res) => {
+  const assessment = assessments.get(req.params.assessmentId);
+  if (!assessment) return res.status(404).json({ message: 'Assessment not found.' });
+  return res.json({ assessment });
 });
 
 app.post('/api/intelligence/:type', upload.single('document'), async (req, res) => {

@@ -1,4 +1,5 @@
 ﻿const { projects, parcels } = require('./data/mockData');
+const { requestGemini } = require('./geminiService');
 
 const supportedTypes = {
   award: 'Award Notice',
@@ -110,11 +111,6 @@ function extractDemo(type, file) {
 }
 
 async function tryGemini(type, file) {
-  if (!process.env.GEMINI_API_KEY || !global.fetch) {
-    console.log('[Gemini] Fallback: GEMINI_API_KEY not configured or fetch unavailable.');
-    return null;
-  }
-
   const serviceLabels = {
     award: 'Award Notice',
     compensation: 'Compensation Ledger',
@@ -166,25 +162,19 @@ Important rules:
     const buffer = file && file.buffer ? file.buffer : Buffer.from('');
     console.log(`[Gemini] Attempting live extraction for ${serviceLabels[type] || type} (${file?.originalname || 'unknown file'})`);
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || 'gemini-1.5-flash'}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [
-            { text: prompt },
-            { inlineData: { mimeType, data: buffer.toString('base64') } }
-          ]
-        }]
-      })
+    const resultFromGemini = await requestGemini({
+      label: `${serviceLabels[type] || type} extraction`,
+      contents: [{
+        parts: [
+          { text: prompt },
+          { inlineData: { mimeType, data: buffer.toString('base64') } }
+        ]
+      }]
     });
 
-    if (!response.ok) {
-      console.log(`[Gemini] API error: ${response.status} ${response.statusText}`);
-      return null;
-    }
-
-    const payload = await response.json();
+    if (!resultFromGemini) return null;
+    const { payload, model } = resultFromGemini;
+    console.log(`[Gemini] Live response received from model ${model}.`);
     console.log('[Gemini] Raw API response:');
     console.log(JSON.stringify(payload, null, 2));
 

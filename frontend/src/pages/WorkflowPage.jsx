@@ -22,7 +22,7 @@ export default function WorkflowPage() {
           <h1 className="font-display text-5xl leading-tight text-bhumisetu-darkest">Acquisition Lifecycle</h1>
         </div>
         <p className="text-gray-700 font-body text-lg max-w-2xl">
-          From proposal to possession — one connected view of land, people, progress and risk.
+          From proposal to possession  -  one connected view of land, people, progress and risk.
         </p>
       </header>
 
@@ -66,8 +66,8 @@ export default function WorkflowPage() {
                   <div className="flex-1">
                     <div className="font-display text-xl text-bhumisetu-darkest mb-2">
                       {step.name}
-                      {isCompleted && <span className="ml-3 text-sm text-green-600">✓ Completed</span>}
-                      {isCurrent && <span className="ml-3 text-sm font-bold text-bhumisetu-brass">● Current</span>}
+                      {isCompleted && <span className="ml-3 text-sm text-green-600">DONE</span>}
+                      {isCurrent && <span className="ml-3 text-sm font-bold text-bhumisetu-brass">CURRENT</span>}
                     </div>
                     <p className="text-gray-600 font-body text-sm">{step.description}</p>
                   </div>
@@ -107,15 +107,15 @@ export default function WorkflowPage() {
             <h3 className="font-body font-semibold text-bhumisetu-forest mb-3">Early Stage</h3>
             <ul className="space-y-2 text-sm text-gray-700 font-body">
               <li className="flex gap-2">
-                <span className="text-bhumisetu-brass">→</span>
+                <span className="text-bhumisetu-brass">&gt;</span>
                 <span><strong>Proposal:</strong> Project inception and planning</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-bhumisetu-brass">→</span>
+                <span className="text-bhumisetu-brass">&gt;</span>
                 <span><strong>Verification:</strong> Validate land records</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-bhumisetu-brass">→</span>
+                <span className="text-bhumisetu-brass">&gt;</span>
                 <span><strong>Scrutiny:</strong> Committee evaluation</span>
               </li>
             </ul>
@@ -125,15 +125,15 @@ export default function WorkflowPage() {
             <h3 className="font-body font-semibold text-bhumisetu-forest mb-3">Execution & Completion</h3>
             <ul className="space-y-2 text-sm text-gray-700 font-body">
               <li className="flex gap-2">
-                <span className="text-bhumisetu-brass">→</span>
+                <span className="text-bhumisetu-brass">&gt;</span>
                 <span><strong>Award to Possession:</strong> Legal transfers</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-bhumisetu-brass">→</span>
+                <span className="text-bhumisetu-brass">&gt;</span>
                 <span><strong>R&R:</strong> Support for affected communities</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-bhumisetu-brass">→</span>
+                <span className="text-bhumisetu-brass">&gt;</span>
                 <span><strong>Completion:</strong> Project handoff</span>
               </li>
             </ul>

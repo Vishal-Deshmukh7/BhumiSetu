@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Link, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import DashboardPage from './pages/DashboardPage'
-import DocumentsPage from './pages/DocumentsPage'
-import IntelligencePage from './pages/IntelligencePage'
+import CompensationIntelligencePage from './pages/CompensationIntelligencePage'
 import MapPage from './pages/MapPage'
 import ProjectWorkspacePage from './pages/ProjectWorkspacePage'
 import ProjectsPage from './pages/ProjectsPage'
@@ -40,8 +39,7 @@ function AppLayout() {
     { path: '/projects', label: 'Projects' },
     { path: '/map', label: 'GIS Map' },
     { path: '/workflow', label: 'Workflow' },
-    { path: '/intelligence', label: 'Intelligence' },
-    { path: '/documents', label: 'Documents' },
+    { path: '/compensation', label: 'COMPENSATION INTELLIGENCE' },
   ]
 
   return (
@@ -65,7 +63,7 @@ function AppLayout() {
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto border-r border-bhumisetu-muted/20 bg-bhumisetu-darkest text-bhumisetu-cream shadow-2xl shadow-emerald-950/20 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? '-translate-x-full' : 'translate-x-0'}`}>
         <div className="flex items-center justify-between border-b border-bhumisetu-muted/20 p-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-bhumisetu-brass to-bhumisetu-muted text-xs font-bold text-white">భూ</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-bhumisetu-brass to-bhumisetu-muted text-xs font-bold text-white">BS</div>
             <div>
               <div className="font-display text-lg font-semibold text-bhumisetu-cream">BHUMISETU</div>
               <div className="text-xs leading-tight text-bhumisetu-muted">National Land Intelligence</div>
@@ -77,7 +75,7 @@ function AppLayout() {
             onClick={() => setIsCollapsed(true)}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-lg text-bhumisetu-cream/70 transition hover:bg-bhumisetu-forest hover:text-white"
           >
-            ✕
+            x
           </button>
         </div>
 
@@ -98,7 +96,7 @@ function AppLayout() {
 
         <div className="absolute bottom-6 left-6 right-6 space-y-2 border-t border-bhumisetu-muted/20 pt-4 text-xs text-bhumisetu-muted/50">
           <div className="font-body">Real-Time National Land Acquisition &amp; Management System</div>
-          <div className="text-bhumisetu-muted/30">SIH 2026 • PS 26016</div>
+          <div className="text-bhumisetu-muted/30">SIH 2026 - PS 26016</div>
         </div>
       </aside>
 
@@ -109,7 +107,7 @@ function AppLayout() {
           onClick={() => setIsCollapsed((value) => !value)}
           className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl border border-bhumisetu-muted/50 bg-bhumisetu-darkest/95 text-xl text-white shadow-elevated transition hover:border-bhumisetu-brass hover:bg-bhumisetu-forest"
         >
-          ☰
+          <span className="flex flex-col gap-1"><span className="block h-0.5 w-5 bg-white" /><span className="block h-0.5 w-5 bg-white" /><span className="block h-0.5 w-5 bg-white" /></span>
         </button>
         <Routes>
           <Route path="/" element={<DashboardPage />} />
@@ -117,14 +115,14 @@ function AppLayout() {
           <Route path="/projects/:projectId" element={<ProjectWorkspacePage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/workflow" element={<WorkflowPage />} />
-          <Route path="/intelligence" element={<IntelligencePage />} />
-          <Route path="/documents" element={<DocumentsPage />} />
+          <Route path="/compensation" element={<CompensationIntelligencePage />} />
+          <Route path="/intelligence" element={<Navigate to="/compensation" replace />} />
+          <Route path="/documents" element={<Navigate to="/compensation" replace />} />
         </Routes>
       </main>
     </div>
   )
 }
-
 export default function App() {
   return (
     <BrowserRouter>

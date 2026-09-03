@@ -7,6 +7,26 @@ This project has two deployable parts:
 
 The frontend must call the public Render API URL after deployment. Never put `GEMINI_API_KEY` in the frontend or in Vercel.
 
+## Data sources and demo boundaries
+
+The mock adapter in `backend/data/mockData.js` contains seven identifiable
+public infrastructure projects with links to their government or implementing
+agency sources. Project identity, broad scope, location and agency are public
+metadata. Parcel ownership, title references, boundaries, progress, risk,
+compensation and R&R figures are explicitly synthetic demonstration records;
+they must not be treated as legal, cadastral or payment records. A production
+deployment should replace this adapter with the authorised records/MongoDB
+integration without exposing ownership data to the browser beyond the
+approved API contract.
+
+Parcel detail endpoints are available at:
+
+- `GET /api/parcels/:parcelId`
+- `GET /api/parcels/:parcelId/context`
+
+The context response combines the synthetic parcel with its public project
+metadata, acquisition timeline and operational dependency for the inspector.
+
 ## 1. Before deployment
 
 1. Create a GitHub repository.
@@ -41,6 +61,7 @@ git push -u origin main
 6. Open **Environment Variables** and click **Add Environment Variable**:
    - `GEMINI_API_KEY` = your real Gemini API key
    - `GEMINI_MODEL` = the model that is enabled for your key
+   - `GEMINI_FALLBACK_MODELS` = comma-separated enabled fallback models, for example `gemini-1.5-flash-8b,gemini-1.5-pro`
    - `PORT` = `10000`
 7. Click **Create Web Service**.
 8. Wait until Render shows **Live**.
@@ -88,18 +109,19 @@ Open each route:
 - `/projects`
 - `/map`
 - `/workflow`
+- `/compensation`
 - `/intelligence`
-- `/documents`
 
 Then verify:
 
 1. The dashboard loads project data.
 2. Project cards open correctly.
 3. The GIS map loads parcel geometry and tiles.
-4. The Intelligence page can upload a PDF.
-5. Gemini output appears in the Render service logs when the API call succeeds.
-6. If Gemini is unavailable or rate-limited, the fallback message appears in Render logs.
-7. PDF export downloads successfully.
+4. Compensation Intelligence loads project and synthetic parcel records, calculates a preliminary estimate and saves an assessment.
+5. The legacy Intelligence page can still upload a PDF when document reconciliation is needed.
+6. Gemini output appears in the Render service logs when the API call succeeds.
+7. If Gemini is unavailable or rate-limited, deterministic calculation and a labelled fallback insight still appear.
+8. Print / export on the Compensation Intelligence assessment produces a readable browser printout.
 
 ## 5. View Gemini logs on Render
 
@@ -115,12 +137,14 @@ Then verify:
 [Gemini] Live extraction succeeded
 ```
 
-Fallback output is marked with:
+When the configured model is rate-limited, the backend tries each enabled fallback model in order and logs the switch. If all models fail, fallback output is marked with:
 
 ```text
 [Gemini] API error
 [Gemini] Using fallback synthetic extraction
 ```
+
+The fallback list must contain models enabled for the same Gemini API key. Model switching cannot bypass a key-wide quota or billing limit; it only handles model-specific limits and temporary model failures.
 
 ## 6. Updating the deployed app
 

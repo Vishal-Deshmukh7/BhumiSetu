@@ -27,8 +27,8 @@ npm run dev
 | `/projects` | `ProjectsPage.jsx` | Browse all projects with filters |
 | `/projects/:id` | `ProjectWorkspacePage.jsx` | Detailed project view + parcels |
 | `/map` | `MapPage.jsx` | GIS-based parcel explorer |
-| `/intelligence` | `IntelligencePage.jsx` | AI-driven risk assessment |
-| `/documents` | `DocumentsPage.jsx` | Document repository & OCR results |
+| `/compensation` | `CompensationIntelligencePage.jsx` | Rule-based compensation and entitlement assessment |
+| `/intelligence` | `IntelligencePage.jsx` | Legacy document reconciliation and AI risk assessment |
 | `/workflow` | `WorkflowPage.jsx` | 9-step acquisition lifecycle |
 
 ---
@@ -90,6 +90,10 @@ GET /projects/:id            - Single project
 GET /projects/:id/parcels    - Parcels for project
 GET /documents               - All documents
 GET /intelligence            - Risk data + recommendations
+POST /compensation/calculate - Deterministic preliminary estimate
+POST /compensation/analyze  - AI interpretation of deterministic result
+POST /compensation/assessments - Save an assessment
+GET /compensation/assessments/:id - Retrieve a saved assessment
 GET /map                     - All parcels with coordinates
 ```
 
