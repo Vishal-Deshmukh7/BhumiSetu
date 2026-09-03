@@ -5,6 +5,7 @@ import CompensationIntelligencePage from './pages/CompensationIntelligencePage'
 import MapPage from './pages/MapPage'
 import ProjectWorkspacePage from './pages/ProjectWorkspacePage'
 import ProjectsPage from './pages/ProjectsPage'
+import RoleSelectionPage from './pages/RoleSelectionPage'
 import WorkflowPage from './pages/WorkflowPage'
 
 function AppLayout() {
@@ -33,9 +34,26 @@ function AppLayout() {
     </div>
   )
 
+  if (location.pathname === '/') {
+    return (
+      <>
+        {showIntro && (
+          <div className="intro-loader fixed inset-0 z-[999] flex items-center justify-center bg-bhumisetu-darkest">
+            <div className="intro-stack familjen-grotesk text-center text-white">
+              {introWords.map((word, index) => renderIntroWord(word, index))}
+            </div>
+          </div>
+        )}
+        <Routes>
+          <Route path="/" element={<RoleSelectionPage />} />
+        </Routes>
+      </>
+    )
+  }
+
   const isActive = (path) => location.pathname === path
   const navItems = [
-    { path: '/', label: 'Dashboard' },
+    { path: '/dashboard', label: 'Dashboard' },
     { path: '/projects', label: 'Projects' },
     { path: '/map', label: 'GIS Map' },
     { path: '/workflow', label: 'Workflow' },
@@ -110,7 +128,8 @@ function AppLayout() {
           <span className="flex flex-col gap-1"><span className="block h-0.5 w-5 bg-white" /><span className="block h-0.5 w-5 bg-white" /><span className="block h-0.5 w-5 bg-white" /></span>
         </button>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<RoleSelectionPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:projectId" element={<ProjectWorkspacePage />} />
           <Route path="/map" element={<MapPage />} />
