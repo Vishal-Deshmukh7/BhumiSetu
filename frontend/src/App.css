@@ -37,7 +37,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background: #12372a;
+  background: #004643;
   color: #f4f1e8;
   font-size: 0.75rem;
   font-weight: 800;
@@ -87,7 +87,7 @@
 }
 
 .brand-subtitle {
-  color: #94a3b8;
+  color: #250885;
   font-size: 0.74rem;
 }
 
@@ -99,7 +99,7 @@
 
 .nav-section {
   margin: 18px 10px 10px;
-  color: #64748b;
+  color: #1c1c1d;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -138,7 +138,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #64748b;
+  color: #1c1c1d;
   margin-bottom: 8px;
 }
 
@@ -189,7 +189,7 @@
 .stat-label {
   font-size: 0.72rem;
   text-transform: uppercase;
-  color: #64748b;
+  color: #1c1c1d;
   letter-spacing: 0.06em;
 }
 
@@ -202,7 +202,7 @@
 
 .stat-subtext {
   margin-top: 6px;
-  color: #64748b;
+  color: #1c1c1d;
   font-size: 0.8rem;
 }
 
@@ -290,7 +290,7 @@
 .alert-item {
   border-radius: 12px;
   padding: 12px 14px;
-  border-left: 4px solid #94a3b8;
+  border-left: 4px solid #250885;
   background: #f8fafc;
 }
 
@@ -352,7 +352,7 @@
 .project-id {
   font-size: 0.7rem;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: #1c1c1d;
   text-transform: uppercase;
 }
 
@@ -554,7 +554,7 @@
   font-size: 0.76rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #64748b;
+  color: #1c1c1d;
 }
 
 .table-project-name {
@@ -563,7 +563,7 @@
 }
 
 .table-project-id {
-  color: #64748b;
+  color: #1c1c1d;
   font-size: 0.72rem;
 }
 

@@ -222,7 +222,7 @@ Sidebar updates with parcel details
 Tailwind CSS Configuration
 │
 ├─ Color Tokens
-│  ├─ Primary: Forest Green (#12372A)
+│  ├─ Primary: Forest Green (#004643)
 │  ├─ Dark: Darkest (#08120F)
 │  ├─ Accent: Brass (#C7A75B)
 │  ├─ Muted: Green (#527A67)

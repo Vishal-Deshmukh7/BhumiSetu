@@ -12,12 +12,13 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   font-family: 'Manrope', sans-serif;
   background-color: #F4F1E8;
-  color: #12372A;
+  color: #004643;
 }
 
 .familjen-grotesk {
@@ -29,8 +30,8 @@ html, body {
 
 #root {
   width: 100%;
-  height: 100%;
-  display: flex;
+  min-height: 100vh;
+  display: block;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -49,13 +50,13 @@ h2 {
   font-size: 2rem;
   font-weight: 400;
   line-height: 1.3;
-  color: #12372A;
+  color: #004643;
 }
 
 h3 {
   font-size: 1.5rem;
   font-weight: 500;
-  color: #12372A;
+  color: #004643;
 }
 
 p {
@@ -147,3 +148,52 @@ p {
     pointer-events: none;
   }
 }
+
+/* Landowner Portal */
+.lo-layout {
+  min-height: 100vh;
+  background: #F8FAFC;
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.lo-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.lo-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border-color: #CBD5E1;
+}
+
+.lo-prose {
+  color: #1E293B;
+  line-height: 1.7;
+  letter-spacing: 0.015em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lo-animate-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@keyframes lo-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lo-animate-in {
+  animation: lo-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lo-animate-delay-1 { animation-delay: 0.05s; }
+.lo-animate-delay-2 { animation-delay: 0.1s; }
+.lo-animate-delay-3 { animation-delay: 0.15s; }
+.lo-animate-delay-4 { animation-delay: 0.2s; }
+.lo-animate-delay-5 { animation-delay: 0.25s; }

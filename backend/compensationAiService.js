@@ -25,17 +25,18 @@ DETERMINISTIC_RESULT:
 ${JSON.stringify(result)}`;
 
   try {
-    const resultFromGemini = await requestGemini({
+    const resultFromAI = await requestWithProvider({
       label: 'compensation interpretation',
-      contents: [{ parts: [{ text: prompt }] }]
+      messages: [
+        { role: 'system', content: 'Return valid JSON only. Do not change deterministic financial values.' },
+        { role: 'user', content: prompt },
+      ],
     });
-    if (!resultFromGemini) return fallback;
-    const { payload, model } = resultFromGemini;
-    const text = payload.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const parsed = JSON.parse(String(text).replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim());
+    if (!resultFromAI?.parsed) return fallback;
+    const { model, parsed } = resultFromAI;
     if (!parsed || typeof parsed.summary !== 'string' || !Array.isArray(parsed.priorities)) return fallback;
     return {
-      provider: 'gemini',
+      provider: resultFromAI.provider,
       model,
       label: 'AI interpretation of deterministic result',
       fallback: false,
@@ -49,4 +50,4 @@ ${JSON.stringify(result)}`;
 }
 
 module.exports = { interpretCompensation, fallbackInsight };
-const { requestGemini } = require('./geminiService');
+const { requestWithProvider } = require('./services/ai/aiService');

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const roles = [
@@ -24,11 +23,10 @@ const roles = [
 
 function RoleSelectionPage() {
   const navigate = useNavigate()
-  const [showLandownerModal, setShowLandownerModal] = useState(false)
 
   const selectRole = (roleKey) => {
     if (roleKey === 'landowner') {
-      setShowLandownerModal(true)
+      navigate('/landowner/dashboard')
       return
     }
 
@@ -77,34 +75,6 @@ function RoleSelectionPage() {
           BHUMISETU - National Land Intelligence
         </footer>
       </div>
-
-      {showLandownerModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-bhumisetu-darkest/65 p-4" role="presentation" onMouseDown={() => setShowLandownerModal(false)}>
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="landowner-portal-title"
-            className="w-full max-w-lg rounded-2xl border border-bhumisetu-muted/20 bg-white p-6 shadow-2xl md:p-8"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-bhumisetu-cream text-sm font-bold text-bhumisetu-forest">AL</div>
-            <h2 id="landowner-portal-title" className="mt-5 font-display text-3xl text-bhumisetu-darkest">Landowner Portal</h2>
-            <p className="mt-4 text-base leading-7 text-bhumisetu-forest">
-              The Landowner Portal is currently under development and will be available in an upcoming release.
-            </p>
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              Our team is actively building features for landowners including parcel information, document submission, compensation tracking, and acquisition status monitoring.
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowLandownerModal(false)}
-              className="mt-7 rounded-lg bg-bhumisetu-forest px-5 py-3 text-sm font-semibold text-white transition hover:bg-bhumisetu-darkest"
-            >
-              Back to Role Selection
-            </button>
-          </section>
-        </div>
-      )}
     </main>
   )
 }

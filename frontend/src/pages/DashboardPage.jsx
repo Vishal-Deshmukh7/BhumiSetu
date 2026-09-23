@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { jsPDF } from 'jspdf'
 import { getRiskScoreBadge } from '../utils/risk'
 import { API_BASE } from '../config'
+import AiResponsePanel from '../components/AiResponsePanel'
 
 function StatCard({ label, value, subtext }) {
   return (
@@ -77,6 +78,10 @@ function ProjectCard({ project, isSelected, onClick }) {
 export default function DashboardPage() {
   const [dashboard, setDashboard] = useState(null)
   const [selectedProject, setSelectedProject] = useState(null)
+  const [aiResult, setAiResult] = useState(null)
+  const [aiError, setAiError] = useState('')
+  const [aiLoading, setAiLoading] = useState('')
+  const [assistantQuestion, setAssistantQuestion] = useState('')
 
   useEffect(() => {
     fetch(`${API_BASE}/dashboard`)
@@ -102,6 +107,32 @@ export default function DashboardPage() {
   const summary = dashboard.summary
   const project = selectedProject ?? dashboard.projects[0]
   const riskBadge = getRiskScoreBadge(project?.riskScore)
+
+  const runAiRequest = async (label, url, options = {}) => {
+    setAiLoading(label)
+    setAiError('')
+    setAiResult(null)
+    try {
+      const response = await fetch(`${API_BASE}${url}`, {
+        method: options.method || 'POST',
+        headers: options.method === 'GET' ? undefined : { 'Content-Type': 'application/json' },
+        body: options.method === 'GET' ? undefined : JSON.stringify(options.body),
+      })
+      const payload = await response.json()
+      if (!response.ok) throw new Error(payload.message || payload.error || 'AI Administrator request failed.')
+      setAiResult(payload)
+    } catch (error) {
+      setAiError(error.message || 'AI Administrator request failed.')
+    } finally {
+      setAiLoading('')
+    }
+  }
+
+  const askAssistant = (event) => {
+    event.preventDefault()
+    if (!assistantQuestion.trim()) return
+    runAiRequest('assistant', '/ai/assistant', { body: { question: assistantQuestion.trim() } })
+  }
 
   const exportReport = () => {
     const pdf = new jsPDF()
@@ -219,6 +250,61 @@ export default function DashboardPage() {
               onClick={() => setSelectedProject(item)}
             />
           ))}
+        </div>
+      </section>
+
+      {/* AI Administrator */}
+      <section className="bg-white rounded-2xl p-8 border border-gray-200 shadow-subtle">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-6">
+          <div>
+            <div className="text-xs font-body font-semibold text-bhumisetu-muted uppercase tracking-wider mb-2">Synthetic decision support</div>
+            <h2 className="font-display text-2xl text-bhumisetu-darkest">AI Administrator</h2>
+            <p className="text-sm text-gray-600 font-body mt-1">Ask for a bounded summary of the selected acquisition case.</p>
+          </div>
+          <div className="rounded-lg border border-bhumisetu-brass/40 bg-yellow-50 px-4 py-3 text-xs text-yellow-900 font-body">
+            Synthetic demonstration data only. Verify against authorised land records before action.
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="space-y-4">
+            <label className="block text-sm font-body font-semibold text-gray-700">
+              Project
+              <select
+                value={project?.id || ''}
+                onChange={(event) => setSelectedProject(dashboard.projects.find((item) => item.id === event.target.value) || project)}
+                className="mt-2 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 font-normal text-gray-800 focus:border-bhumisetu-brass focus:outline-none"
+              >
+                {dashboard.projects.map((item) => <option key={item.id} value={item.id}>{item.name} ({item.id})</option>)}
+              </select>
+            </label>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1">
+              <button type="button" disabled={!project || aiLoading} onClick={() => runAiRequest('summary', '/ai/case-summary', { body: { projectId: project.id } })} className="rounded-lg bg-bhumisetu-forest px-4 py-3 text-sm font-semibold text-white transition hover:bg-bhumisetu-darkest disabled:cursor-not-allowed disabled:opacity-40">
+                {aiLoading === 'summary' ? 'Preparing…' : 'AI case summary'}
+              </button>
+              <button type="button" disabled={!project || aiLoading} onClick={() => runAiRequest('conflict', '/ai/conflict-explanation', { body: { projectId: project.id } })} className="rounded-lg border border-bhumisetu-brass px-4 py-3 text-sm font-semibold text-bhumisetu-brass transition hover:bg-yellow-50 disabled:cursor-not-allowed disabled:opacity-40">
+                {aiLoading === 'conflict' ? 'Explaining…' : 'Explain conflicts'}
+              </button>
+              <button type="button" disabled={!project || aiLoading} onClick={() => runAiRequest('critical', `/ai/critical-parcels?projectId=${encodeURIComponent(project.id)}`, { method: 'GET' })} className="rounded-lg border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
+                {aiLoading === 'critical' ? 'Finding…' : 'Critical parcels'}
+              </button>
+            </div>
+            <form onSubmit={askAssistant} className="space-y-2">
+              <label htmlFor="ai-question" className="text-sm font-body font-semibold text-gray-700">Safe assistant query</label>
+              <div className="flex gap-2">
+                <input id="ai-question" value={assistantQuestion} onChange={(event) => setAssistantQuestion(event.target.value)} maxLength={500} placeholder="Which parcels are critical?" className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-bhumisetu-brass focus:outline-none" />
+                <button type="submit" disabled={!assistantQuestion.trim() || aiLoading} className="rounded-lg bg-bhumisetu-darkest px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">
+                  Ask
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="lg:col-span-2">
+            {aiError && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800"><strong>Request failed:</strong> {aiError}</div>}
+            {!aiResult && !aiError && <div className="flex min-h-52 items-center justify-center rounded-xl bg-bhumisetu-cream/50 p-6 text-center text-sm text-gray-500">Choose an action to view the structured administrator response.</div>}
+            {aiResult && <AiResponsePanel data={aiResult} />}
+          </div>
         </div>
       </section>
 

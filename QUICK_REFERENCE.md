@@ -37,7 +37,7 @@ npm run dev
 
 ### Colors (Tailwind Config)
 ```javascript
-Primary: bhumisetu-forest (#12372A)
+Primary: bhumisetu-forest (#004643)
 Dark: bhumisetu-darkest (#08120F)
 Accent: bhumisetu-brass (#C7A75B)
 Muted: bhumisetu-muted (#527A67)

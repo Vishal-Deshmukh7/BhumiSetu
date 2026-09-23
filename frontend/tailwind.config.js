@@ -10,7 +10,7 @@ export default {
         // BHUMISETU Color Palette
         'bhumisetu': {
           // Primary - Deep Forest / Government Green
-          'forest': '#12372A',
+          'forest': '#004643',
           'darkest': '#08120F',
           
           // Neutrals
@@ -26,6 +26,25 @@ export default {
           'warning': '#C58A35',
           'danger': '#B84A43',
           'info': '#54748A',
+        },
+        // Landowner Portal - Calm, trustworthy, modern
+        'lo': {
+          'navy': '#0F172A',
+          'slate': '#1E293B',
+          'surface': '#F8FAFC',
+          'card': '#FFFFFF',
+          'border': '#E2E8F0',
+          'teal': '#0D9488',
+          'tealLight': '#CCFBF1',
+          'emerald': '#059669',
+          'emeraldLight': '#D1FAE5',
+          'amber': '#D97706',
+          'amberLight': '#FEF3C7',
+          'red': '#DC2626',
+          'redLight': '#FEE2E2',
+          'text': '#0F172A',
+          'textSecondary': '#334155',
+          'textMuted': '#475569',
         },
       },
       fontFamily: {

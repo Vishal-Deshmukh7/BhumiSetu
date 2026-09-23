@@ -23,7 +23,7 @@ National Land Acquisition & Management System - Real-time decision support platf
 ### Color Palette (BHUMISETU)
 ```css
 Primary Colors:
-- Deep Forest / Government Green: #12372A
+- Deep Forest / Government Green: #004643
 - Darkest Background: #08120F
 - Warm Off-white: #F4F1E8
 - Secondary Warm Surface: #EAE6DA

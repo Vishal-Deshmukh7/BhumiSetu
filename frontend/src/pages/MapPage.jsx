@@ -84,7 +84,7 @@ function GeometryPreview({ parcel }) {
   return (
     <svg viewBox="0 0 200 120" role="img" aria-label="Synthetic parcel boundary preview" className="h-32 w-full rounded-lg border border-bhumisetu-muted/20 bg-bhumisetu-cream/60">
       <path d="M 12 20 H 188 M 12 60 H 188 M 12 100 H 188 M 40 8 V 112 M 100 8 V 112 M 160 8 V 112" stroke="#d8d4c8" strokeWidth="1" />
-      <polygon points={path} fill="#c7a75b" fillOpacity="0.35" stroke="#12372a" strokeWidth="2.5" />
+      <polygon points={path} fill="#c7a75b" fillOpacity="0.35" stroke="#004643" strokeWidth="2.5" />
       <circle cx="100" cy="60" r="3" fill="#b84a43" />
     </svg>
   )

@@ -7,8 +7,16 @@ import ProjectWorkspacePage from './pages/ProjectWorkspacePage'
 import ProjectsPage from './pages/ProjectsPage'
 import RoleSelectionPage from './pages/RoleSelectionPage'
 import WorkflowPage from './pages/WorkflowPage'
+import LandownerLayout from './pages/landowner/LandownerLayout'
+import LandownerDashboard from './pages/landowner/LandownerDashboard'
+import LandownerParcelsPage from './pages/landowner/LandownerParcelsPage'
+import LandownerParcelPage from './pages/landowner/LandownerParcelPage'
+import LandownerProposalsPage from './pages/landowner/LandownerProposalsPage'
+import LandownerDisputesPage from './pages/landowner/LandownerDisputesPage'
+import LandownerDocumentsPage from './pages/landowner/LandownerDocumentsPage'
+import LandownerContactsPage from './pages/landowner/LandownerContactsPage'
 
-function AppLayout() {
+function AdminLayout({ children }) {
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showIntro, setShowIntro] = useState(true)
@@ -34,23 +42,6 @@ function AppLayout() {
     </div>
   )
 
-  if (location.pathname === '/') {
-    return (
-      <>
-        {showIntro && (
-          <div className="intro-loader fixed inset-0 z-[999] flex items-center justify-center bg-bhumisetu-darkest">
-            <div className="intro-stack familjen-grotesk text-center text-white">
-              {introWords.map((word, index) => renderIntroWord(word, index))}
-            </div>
-          </div>
-        )}
-        <Routes>
-          <Route path="/" element={<RoleSelectionPage />} />
-        </Routes>
-      </>
-    )
-  }
-
   const isActive = (path) => location.pathname === path
   const navItems = [
     { path: '/dashboard', label: 'Dashboard' },
@@ -61,7 +52,7 @@ function AppLayout() {
   ]
 
   return (
-    <div className="flex min-h-screen bg-bhumisetu-cream">
+    <div className="flex min-h-screen w-full min-w-0 bg-bhumisetu-cream">
       {showIntro && (
         <div className="intro-loader fixed inset-0 z-[999] flex items-center justify-center bg-bhumisetu-darkest">
           <div className="intro-stack familjen-grotesk text-center text-white">
@@ -118,7 +109,7 @@ function AppLayout() {
         </div>
       </aside>
 
-      <main className={`min-w-0 flex-1 overflow-y-auto transition-[margin] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'ml-0' : 'lg:ml-64'}`}>
+      <main className={`min-w-0 w-full flex-1 overflow-x-hidden transition-[margin] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isCollapsed ? 'ml-0' : 'lg:ml-64'}`}>
         <button
           type="button"
           aria-label={isCollapsed ? 'Open navigation' : 'Collapse navigation'}
@@ -127,25 +118,39 @@ function AppLayout() {
         >
           <span className="flex flex-col gap-1"><span className="block h-0.5 w-5 bg-white" /><span className="block h-0.5 w-5 bg-white" /><span className="block h-0.5 w-5 bg-white" /></span>
         </button>
-        <Routes>
-          <Route path="/" element={<RoleSelectionPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/projects/:projectId" element={<ProjectWorkspacePage />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/workflow" element={<WorkflowPage />} />
-          <Route path="/compensation" element={<CompensationIntelligencePage />} />
-          <Route path="/intelligence" element={<Navigate to="/compensation" replace />} />
-          <Route path="/documents" element={<Navigate to="/compensation" replace />} />
-        </Routes>
+        {children}
       </main>
     </div>
   )
 }
+
 export default function App() {
   return (
     <BrowserRouter>
-      <AppLayout />
+      <Routes>
+        <Route path="/" element={<RoleSelectionPage />} />
+
+        <Route path="/landowner/login" element={<Navigate to="/landowner/dashboard" replace />} />
+        <Route path="/landowner" element={<LandownerLayout />}>
+          <Route index element={<Navigate to="/landowner/dashboard" replace />} />
+          <Route path="dashboard" element={<LandownerDashboard />} />
+          <Route path="parcels" element={<LandownerParcelsPage />} />
+          <Route path="parcels/:parcelId" element={<LandownerParcelPage />} />
+          <Route path="proposals" element={<LandownerProposalsPage />} />
+          <Route path="disputes" element={<LandownerDisputesPage />} />
+          <Route path="documents" element={<LandownerDocumentsPage />} />
+          <Route path="contacts" element={<LandownerContactsPage />} />
+        </Route>
+
+        <Route path="/dashboard" element={<AdminLayout><DashboardPage /></AdminLayout>} />
+        <Route path="/projects" element={<AdminLayout><ProjectsPage /></AdminLayout>} />
+        <Route path="/projects/:projectId" element={<AdminLayout><ProjectWorkspacePage /></AdminLayout>} />
+        <Route path="/map" element={<AdminLayout><MapPage /></AdminLayout>} />
+        <Route path="/workflow" element={<AdminLayout><WorkflowPage /></AdminLayout>} />
+        <Route path="/compensation" element={<AdminLayout><CompensationIntelligencePage /></AdminLayout>} />
+        <Route path="/intelligence" element={<Navigate to="/compensation" replace />} />
+        <Route path="/documents" element={<Navigate to="/compensation" replace />} />
+      </Routes>
     </BrowserRouter>
   )
 }

@@ -5,6 +5,12 @@ const multer = require('multer');
 const { analyzeDocument } = require('./intelligenceService');
 const { calculateCompensation } = require('./compensationService');
 const { interpretCompensation } = require('./compensationAiService');
+const { connectMongo } = require('./mongo');
+const { verifyClaim, getClaimVerification } = require('./services/claimVerificationService');
+const aiTestRouter = require('./routes/aiTest');
+const aiAdminRouter = require('./routes/aiAdmin');
+const landownerRouter = require('./routes/landowner');
+const authRouter = require('./routes/auth');
 const {
   dashboardSummary,
   projects,
@@ -36,6 +42,10 @@ function normalizeMimeType(file) {
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/ai', aiTestRouter);
+app.use('/api/ai', aiAdminRouter);
+app.use('/api/landowner', landownerRouter);
+app.use('/api/landowner', authRouter);
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -47,6 +57,17 @@ const upload = multer({
       return callback(new Error('Unsupported document type'));
     }
 
+    file.mimetype = normalizedType;
+    callback(null, true);
+  }
+});
+const claimUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024, files: 10 },
+  fileFilter: (req, file, callback) => {
+    const normalizedType = normalizeMimeType(file);
+    const allowed = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!allowed.includes(normalizedType)) return callback(new Error('Unsupported document type'));
     file.mimetype = normalizedType;
     callback(null, true);
   }
@@ -197,6 +218,31 @@ app.post('/api/intelligence/:type', upload.single('document'), async (req, res) 
   }
 });
 
+app.post('/api/claims/verify', claimUpload.array('documents', 10), async (req, res) => {
+  if (!req.files || req.files.length < 1) {
+    return res.status(400).json({ message: 'Upload at least one PDF, JPG, or PNG document in the documents field.' });
+  }
+
+  try {
+    const result = await verifyClaim({ body: req.body, files: req.files });
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error('[Claims] Verification failed:', error);
+    return res.status(500).json({ message: 'Claim verification could not be completed. Please try again.' });
+  }
+});
+
+app.get('/api/claims/:claimId', async (req, res) => {
+  try {
+    const result = await getClaimVerification(req.params.claimId);
+    if (!result) return res.status(404).json({ message: 'Claim verification not found.' });
+    return res.json(result);
+  } catch (error) {
+    console.error('[Claims] Read failed:', error);
+    return res.status(500).json({ message: 'Claim verification could not be loaded.' });
+  }
+});
+
 app.get('/api/map', (req, res) => {
   res.json({ parcels });
 });
@@ -211,6 +257,10 @@ app.use((error, req, res, next) => {
   }
 
   return res.status(500).json({ message: 'Unexpected upload error.' });
+});
+
+connectMongo().catch((error) => {
+  console.warn(`[MongoDB] Startup connection failed; using in-memory claim persistence. ${error.message}`);
 });
 
 app.listen(PORT, () => {
